@@ -58,7 +58,9 @@ const getNeighborAndCountry = function (country) {
     request2.send();
     // Callback function inside another one
     request2.addEventListener('load', function() {
-      console.log(this.responseText);
+      const data2 = JSON.parse(this.responseText);
+      console.log(data2);
+      renderCountry(data2);
     })
 
   });
