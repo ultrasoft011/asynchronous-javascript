@@ -7,10 +7,21 @@ const countriesContainer = document.querySelector('.countries');
 // Fetch returns a promise <pending>
 
 const getCountry = function (country) {
-  const request = fetch(`https://restcountries.eu/rest/v2/name/${country}`)
-    .then(res => res.json())
-    .then(data => renderCountry(data[0]));
-};
+// Country 1
+  fetch(`https://restcountries.eu/rest/v2/name/${country}`).then(res => res.json())
+    // This then method returns a new promise
+    .then(data => { 
+        renderCountry(data[0]);
+        const neighbor = data[0].borders[0];
+
+        if (!neighbor) return;
+
+    //Country 2
+    return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbor}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbor'));
+}
 
 getCountry('Colombia');
 
@@ -32,4 +43,4 @@ const renderCountry = function (data) {
 
   countriesContainer.insertAdjacentHTML('beforeend', html);
   countriesContainer.style.opacity = 1;
-};
+}
