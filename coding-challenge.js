@@ -1,4 +1,4 @@
-///////////////////////////////////////
+////////////////////////////////////
 // Coding Challenge #1
 
 /* 
@@ -20,6 +20,11 @@ TEST COORDINATES 2: -33.933, 18.474
 GOOD LUCK 😀
 */
 
+'use strict';
+
+const btn = document.querySelector('.btn-country');
+const countriesContainer = document.querySelector('.countries');
+
 const whereAmI = function (lat, lng) {
   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
     .then(response => {
@@ -29,11 +34,58 @@ const whereAmI = function (lat, lng) {
     .then(data => {
       console.log(data);
       console.log(`You are in ${data.city}, ${data.country}`);
+      //Render the country
+      fetch(`https://restcountries.eu/rest/v2/name/${data.country}`)
+      .then(res => {
+        console.log(res);
+        // To handle error manually 
+        if (!res.ok) throw new Error(`Country not found' ${res.ok})`);
+  
+        return res.json();
+      })
+      // This then method returns a new promise
+      .then(data => {
+        renderCountry(data[0]);
+        const neighbor = data[0].borders[0];
+  
+        if (!neighbor) return;
+  
+        //Country 2: return the promise and handle it outside the function to avoid the callback hell
+        return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbor}`);
+      })
+      .then(response => response.json())
+      .then(data => renderCountry(data))
+      .catch(err => {
+        console.log(`${err}`);
+      });
     })
     .catch(err => {
       console.log(`${err}`);
     });
 };
+
+// Render function
+const renderCountry = function (data) {
+    const html = `
+      <article class="country">
+        <img class="country__img" src="${data.flag}" />
+        <div class="country__data">
+          <h3 class="country__name">${data.name}</h3>
+          <h4 class="country__region">${data.region}</h4>
+          <p class="country__row"><span>👫</span>${(
+            data.population / 1000000
+          ).toFixed(1)} Millions</p>
+          <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+          <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+        </div>
+      </article>`;
+  
+    countriesContainer.insertAdjacentHTML('beforeend', html);
+    countriesContainer.style.opacity = 1;
+  };
+
+
+
 
 whereAmI(52.508, 13.381);
 whereAmI(19.037, 72.873);
