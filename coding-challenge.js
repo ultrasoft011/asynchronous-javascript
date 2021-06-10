@@ -20,14 +20,16 @@ TEST COORDINATES 2: -33.933, 18.474
 GOOD LUCK 😀
 */
 
-const ajaxCall = function () {
-    fetch('https://geocode.xyz/52.508,13.381?geoit=json').then(function(response) {
-        console.log(response);
-        return response.json().then(function(data) {
-            console.log(data);
-        })
+const whereAmI = function (lat, lng) {
+  fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      console.log(`You are in ${data.city}, ${data.country}`);
     })
-}
+    .catch(err => {
+      console.log(`${err}`);
+    });
+};
 
-ajaxCall();
-
+whereAmI(19.037, 72.873);
