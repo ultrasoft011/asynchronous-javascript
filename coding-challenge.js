@@ -86,10 +86,14 @@ const renderCountry = function (data) {
 };
 
 const whereAmINew = async function (lat, lng) {
+  try {
   const res = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
   const data = await res.json();
   console.log(`You're in ${data.city}, ${data.country}`);
-  // Render the country with async await
+  }
+  catch (err) {
+    console.log(err);
+  }
 };
 
 whereAmINew(52.508, 13.381);
