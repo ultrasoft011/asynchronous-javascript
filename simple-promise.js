@@ -12,3 +12,8 @@ const simplePromise = new Promise(function (resolve, reject) {
 });
 
 simplePromise.then(res => console.log(res)).catch(err => console.log(err));
+
+//This is how we encapsulate any asynchronous behavior into a promise 
+// Promisifying: means to convert callback based asynchronous behavior to promise based
+//
+

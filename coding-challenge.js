@@ -25,39 +25,40 @@ GOOD LUCK 😀
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
 
-const whereAmI = function (lat, lng) {
+const whereAmIOld = function (lat, lng) {
   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
     .then(response => {
-        if(!response.ok) throw new Error(`Problem with geocoding ${response.status}`);
-        return response.json();
+      if (!response.ok)
+        throw new Error(`Problem with geocoding ${response.status}`);
+      return response.json();
     })
     .then(data => {
       console.log(data);
       console.log(`You are in ${data.city}, ${data.country}`);
       //Render the country
       fetch(`https://restcountries.eu/rest/v2/name/${data.country}`)
-      .then(res => {
-        console.log(res);
-        // To handle error manually 
-        if (!res.ok) throw new Error(`Country not found' ${res.ok})`);
-  
-        return res.json();
-      })
-      // This then method returns a new promise
-      .then(data => {
-        renderCountry(data[0]);
-        const neighbor = data[0].borders[0];
-  
-        if (!neighbor) return;
-  
-        //Country 2: return the promise and handle it outside the function to avoid the callback hell
-        return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbor}`);
-      })
-      .then(response => response.json())
-      .then(data => renderCountry(data))
-      .catch(err => {
-        console.log(`${err}`);
-      });
+        .then(res => {
+          console.log(res);
+          // To handle error manually
+          if (!res.ok) throw new Error(`Country not found' ${res.ok})`);
+
+          return res.json();
+        })
+        // This then method returns a new promise
+        .then(data => {
+          renderCountry(data[0]);
+          const neighbor = data[0].borders[0];
+
+          if (!neighbor) return;
+
+          //Country 2: return the promise and handle it outside the function to avoid the callback hell
+          return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbor}`);
+        })
+        .then(response => response.json())
+        .then(data => renderCountry(data))
+        .catch(err => {
+          console.log(`${err}`);
+        });
     })
     .catch(err => {
       console.log(`${err}`);
@@ -66,7 +67,7 @@ const whereAmI = function (lat, lng) {
 
 // Render function
 const renderCountry = function (data) {
-    const html = `
+  const html = `
       <article class="country">
         <img class="country__img" src="${data.flag}" />
         <div class="country__data">
@@ -79,14 +80,18 @@ const renderCountry = function (data) {
           <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
         </div>
       </article>`;
-  
-    countriesContainer.insertAdjacentHTML('beforeend', html);
-    countriesContainer.style.opacity = 1;
-  };
 
+  countriesContainer.insertAdjacentHTML('beforeend', html);
+  countriesContainer.style.opacity = 1;
+};
 
+const whereAmINew = async function (lat, lng) {
+  const res = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+  const data = await res.json();
+  console.log(`You're in ${data.city}, ${data.country}`);
+  // Render the country with async await
+};
 
-
-// whereAmI(52.508, 13.381);
-whereAmI(19.037, 72.873);
+whereAmINew(52.508, 13.381);
+// whereAmI(19.037, 72.873);
 // whereAmI(-33.933, 18.474);
